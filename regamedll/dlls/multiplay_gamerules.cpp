@@ -4242,75 +4242,47 @@ int CHalfLifeMultiplay::DeadPlayerAmmo(CBasePlayer *pPlayer)
 inline bool PlayersInRadius(CBasePlayer *pPlayer, Vector vecOrigin)
 {
 	CBaseEntity *pEntity = nullptr;
-	const float flRadius = 6 * randomLocationsCount;
+	const float flRadius = randomSpawnsCount * 4;
 
-		while ((pEntity = UTIL_FindEntityInSphere(pEntity, vecOrigin, flRadius)))
-		{
-			if (pEntity != pPlayer && pEntity->IsPlayer() && pEntity->IsAlive())
-				return true;
-		}
+	while ((pEntity = UTIL_FindEntityInSphere(pEntity, vecOrigin, flRadius)))
+	{
+		if (pEntity != pPlayer && pEntity->IsPlayer() && pEntity->IsAlive())
+			return true;
+	}
 
 	return false;
 }
 
 bool RandomSpawn(CBasePlayer *pPlayer)
 {
-	if (!pPlayer || randomLocationsCount <= 0 || TheNavAreaList.empty())
+	if (!pPlayer || randomSpawnsCount <= 0 || TheNavAreaList.empty())
 	{
 		return false;
 	}
 
-	const float flRadius = 6 * randomLocationsCount;
-	const int testAngle[4] = { 0, 90, 180, -90 };
+	const float flRadius = randomSpawnsCount * 6;
 	const int MAX_ATTEMPTS = 10;
 
-	Vector vecAngle;
-	int bestvecAngle;
-	float bestFraction = 0.0f;
 	int last = lastSpawn[pPlayer->entindex() - 1];
 
 	for (int attempts = 0; attempts < MAX_ATTEMPTS; attempts++)
 	{
-		int which = RANDOM_LONG(0, randomLocationsCount - 1);
+		int which = RANDOM_LONG(0, randomSpawnsCount - 1);
 
-		if (last != which && (randomLocations[last] - randomLocations[which]).Length() > flRadius
-			&& IsFreeSpace(randomLocations[which], human_hull) && !PlayersInRadius(pPlayer, randomLocations[which]))
+		if (last != which && (g_randomSpawns[last].vecOrigin - g_randomSpawns[which].vecOrigin).Length() > flRadius
+			&& IsFreeSpace(g_randomSpawns[which].vecOrigin, human_hull, pPlayer->edict()) && !PlayersInRadius(pPlayer, g_randomSpawns[which].vecOrigin))
 		{
-			UTIL_SetOrigin(pPlayer->pev, randomLocations[which]);
-			lastSpawn[pPlayer->entindex() - 1] = which;
+			UTIL_SetOrigin(pPlayer->pev, g_randomSpawns[which].vecOrigin);
 
-			//CONSOLE_ECHO("\n========================================\n");
-
-			for (int addangle = 0; addangle < ARRAYSIZE(testAngle); addangle++)
-			{
-				TraceResult tr;
-				vecAngle.y = testAngle[addangle];
-				Vector vecStart(randomLocations[which] + vecAngle);
-
-				UTIL_MakeVectors(vecAngle);
-				UTIL_TraceLine(vecStart, vecStart + gpGlobals->v_forward * 1000, dont_ignore_monsters, pPlayer->edict(), &tr);
-
-				if (tr.flFraction > bestFraction)
-				{
-					bestFraction = tr.flFraction;
-					bestvecAngle = vecAngle.y;
-				}
-
-				//CONSOLE_ECHO("Current: %0.f | Fraction: %0.2f\n", vecAngle.y, tr.flFraction);
-			}
-
-			if (bestFraction)
-			{
-				vecAngle.y = bestvecAngle;
-				//CONSOLE_ECHO("Best angle %i | Fraction: %0.2f\n", bestvecAngle, bestFraction);
-			}
-
-			pPlayer->pev->angles = vecAngle;
 			pPlayer->pev->v_angle = g_vecZero;
+			pPlayer->pev->velocity = g_vecZero;
+			pPlayer->pev->angles = g_randomSpawns[which].vecAngle;
+			pPlayer->pev->punchangle = g_vecZero;
 			pPlayer->pev->fixangle = 1;
 
-			pPlayer->pev->velocity = g_vecZero;
-			pPlayer->pev->punchangle = g_vecZero;
+			lastSpawn[pPlayer->entindex() - 1] = which;
+
+			// CONSOLE_ECHO("Area %i | Angle %0.1f\n", g_randomSpawns[which].cur_area->GetID(), pPlayer->pev->angles.y);
 
 			return true;
 		}

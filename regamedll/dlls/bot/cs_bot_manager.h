@@ -270,12 +270,18 @@ inline bool AreBotsAllowed()
 void PrintAllEntities();
 
 
-#define MAX_RANDOM_SPAWNS          64
-#define MIN_AREA_SIZE              64.0f
+#define MAX_RANDOM_SPAWNS     128
 
 
-extern Vector randomLocations[MAX_RANDOM_SPAWNS];
-extern int randomLocationsCount;
+struct RandomSpawnStruct
+{
+	Vector vecOrigin;
+	Vector vecAngle;
+	CNavArea *cur_area;
+};
+
+extern RandomSpawnStruct g_randomSpawns[MAX_RANDOM_SPAWNS];
+extern int randomSpawnsCount;
 
 inline bool IsFreeSpace(Vector vecOrigin, int iHullNumber, edict_t *pSkipEnt = nullptr)
 {
