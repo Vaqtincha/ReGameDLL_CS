@@ -272,16 +272,22 @@ void BotProfileManager::Init(const char *filename, unsigned int *checksum)
 			profile->m_name = CloneString(SharedGetToken());
 
 #ifdef REGAMEDLL_FIXES
-			if (RANDOM_LONG(0, 2) == 2)
+			//if (RANDOM_LONG(0, 2) == 2)
+			auto val = RANDOM_FLOAT(0, 100);
+
+			if (val > 90.0f)
+				profile->m_prefersSilencer |= (1 << WEAPON_USP);
+			if (val > 30.0f)
+				profile->m_prefersSilencer |= (1 << WEAPON_M4A1);
 #else
 			// HACK HACK
 			// Until we have a generalized means of storing bot preferences, we're going to hardcode the bot's
 			// preference towards silencers based on his name.
 			if (profile->m_name[0] % 2)
 #endif
-			{
-				profile->m_prefersSilencer = true;
-			}
+		//	{
+				//profile->m_prefersSilencer = true;
+			//}
 		}
 
 		// read attributes for this profile

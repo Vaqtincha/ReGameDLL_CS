@@ -791,7 +791,8 @@ void CCSBot::SilencerCheck()
 			return;
 
 		// equip silencer if we want to and we don't have a shield.
-		if (isSilencerOn != (GetProfile()->PrefersSilencer() || GetProfile()->GetSkill() > 0.7f) && !HasShield())
+		//if (isSilencerOn != (GetProfile()->PrefersSilencer() || GetProfile()->GetSkill() > 0.7f) && !HasShield())
+		if (isSilencerOn != GetProfile()->PrefersSilencer(pCurrentWeapon->m_iId) && !HasShield())
 #endif
 		{
 			PrintIfWatched("%s silencer!\n", (isSilencerOn) ? "Unequipping" : "Equipping");

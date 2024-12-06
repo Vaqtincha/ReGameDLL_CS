@@ -78,7 +78,7 @@ public:
 		m_attackDelay = 0.0f;
 		m_teams = BOT_TEAM_ANY;
 		m_voiceBank = 0;
-		m_prefersSilencer = false;
+		m_prefersSilencer = 0;
 	}
 	const char *GetName() const { return m_name; }
 	float GetAggression() const { return m_aggression; }
@@ -98,7 +98,15 @@ public:
 	float GetAttackDelay()  const { return m_attackDelay; }
 	int GetVoiceBank()      const { return m_voiceBank; }
 	bool IsValidForTeam(BotProfileTeamType team) const;
-	bool PrefersSilencer()  const { return m_prefersSilencer; }
+	bool PrefersSilencer(int id) const
+	{
+		if (id == WEAPON_USP)
+			return (m_prefersSilencer & (1 << WEAPON_USP)) ? true : false;
+		else if (id == WEAPON_M4A1)
+			return (m_prefersSilencer & (1 << WEAPON_M4A1)) ? true : false;
+
+		return false;
+	}
 
 private:
 	void Inherit(const BotProfile *parent, const BotProfile *baseline);
@@ -121,7 +129,7 @@ private:
 	float m_reactionTime;
 	float m_attackDelay;
 	enum BotProfileTeamType m_teams;
-	bool m_prefersSilencer;
+	int m_prefersSilencer;
 	int m_voiceBank;
 };
 
