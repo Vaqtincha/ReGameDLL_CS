@@ -462,22 +462,32 @@ void BuyState::OnUpdate(CCSBot *me)
 			me->ClientCommand("vesthelm");
 			me->ClientCommand("vest");
 
-			// pistols - if we have no preferred pistol, buy at random
-			if (TheCSBots()->AllowPistols() && !me->GetProfile()->HasPistolPreference())
+			if (TheCSBots()->AllowPistols()
+#ifndef REGAMEDLL_FIXES
+				&& !me->GetProfile()->HasPistolPreference()
+#endif
+			)
 			{
 				if (m_buyPistol)
 				{
-					int which = RANDOM_LONG(0, MAX_BUY_WEAPON_SECONDARY - 1);
+#ifdef REGAMEDLL_FIXES
+					// pistols - if we have no preferred pistol, buy at random
+					if (!me->GetProfile()->HasPistolPreference())
+#endif
+					{
+						int which = RANDOM_LONG(0, MAX_BUY_WEAPON_SECONDARY - 1);
 
-					if (me->m_iTeam == TERRORIST)
-						me->ClientCommand(secondaryWeaponBuyInfoT[which].buyAlias);
-					else
-						me->ClientCommand(secondaryWeaponBuyInfoCT[which].buyAlias);
+						if (me->m_iTeam == TERRORIST)
+							me->ClientCommand(secondaryWeaponBuyInfoT[which].buyAlias);
+						else
+							me->ClientCommand(secondaryWeaponBuyInfoCT[which].buyAlias);
+					}
 
 					// only buy one pistol
 					m_buyPistol = false;
 				}
 
+				// TODO: check m_rgpPlayerItems[PISTOL_SLOT] ?
 				me->ClientCommand("secammo");
 			}
 
