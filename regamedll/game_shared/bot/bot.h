@@ -31,7 +31,7 @@
 #include "gamerules.h"
 
 // 30 times per second, just like human clients
-constexpr float g_flBotCommandInterval = 1.0 / 30.0;
+constexpr float g_flBotCommandInterval = 1.0 / 60.0;
 
 // full AI only 10 times per second
 constexpr float g_flBotFullThinkInterval = 1.0 / 10.0;
