@@ -54,6 +54,7 @@ enum BuyItemMenuSlot
 	MENU_SLOT_ITEM_SHIELD,
 };
 
+
 #define CS_NUM_SKIN				4
 #define CZ_NUM_SKIN				5
 
@@ -107,6 +108,8 @@ extern bool g_skipCareerInitialSpawn;
 
 extern unsigned short m_usResetDecals;
 extern unsigned short g_iShadowSprite;
+
+extern bool g_bHasCZModels;
 
 #ifdef REGAMEDLL_API
 void HandleMenu_ChooseAppearance_OrigFunc(CBasePlayer *pPlayer, int slot);

@@ -240,7 +240,7 @@ void CBasePlayer::SetPlayerModel(BOOL HasC4)
 			model = "vip";
 			break;
 		case MODEL_SPETSNAZ:
-			if (AreRunningCZero())
+			if (AreRunningCZero() || g_bHasCZModels)
 			{
 				model = "spetsnaz";
 				break;
@@ -277,7 +277,7 @@ void CBasePlayer::SetPlayerModel(BOOL HasC4)
 			model = "guerilla";
 			break;
 		case MODEL_MILITIA:
-			if (AreRunningCZero())
+			if (AreRunningCZero() || g_bHasCZModels)
 			{
 				model = "militia";
 				break;
@@ -8400,7 +8400,7 @@ void CBasePlayer::__API_HOOK(SwitchTeam)()
 			szNewModel = "arctic";
 			break;
 		case MODEL_SPETSNAZ:
-			if (AreRunningCZero())
+			if (AreRunningCZero() || g_bHasCZModels)
 			{
 				m_iModelName = MODEL_MILITIA;
 				szNewModel = "militia";
@@ -8437,7 +8437,7 @@ void CBasePlayer::__API_HOOK(SwitchTeam)()
 			break;
 
 		case MODEL_MILITIA:
-			if (AreRunningCZero())
+			if (AreRunningCZero() || g_bHasCZModels)
 			{
 				m_iModelName = MODEL_SPETSNAZ;
 				szNewModel = "spetsnaz";

@@ -84,6 +84,7 @@ int gmsgShowTimer = 0;
 int gmsgAccount = 0;
 int gmsgHealthInfo = 0;
 bool g_bClientPrintEnable = true;
+bool g_bHasCZModels = false;
 
 char *sPlayerModelFiles[] =
 {
@@ -1596,7 +1597,7 @@ LINK_HOOK_VOID_CHAIN(HandleMenu_ChooseAppearance, (CBasePlayer *pPlayer, int slo
 
 void EXT_FUNC __API_HOOK(HandleMenu_ChooseAppearance)(CBasePlayer *pPlayer, int slot)
 {
-	int numSkins = AreRunningCZero() ? CZ_NUM_SKIN : CS_NUM_SKIN;
+	int numSkins = (AreRunningCZero() || g_bHasCZModels) ? CZ_NUM_SKIN : CS_NUM_SKIN;
 
 	struct
 	{
@@ -1634,7 +1635,7 @@ void EXT_FUNC __API_HOOK(HandleMenu_ChooseAppearance)(CBasePlayer *pPlayer, int 
 			appearance.model_name = "guerilla";
 			break;
 		case 5:
-			if (AreRunningCZero())
+			if (AreRunningCZero() || g_bHasCZModels)
 			{
 				appearance.model_id = MODEL_MILITIA;
 				appearance.model_name = "militia";
@@ -1683,7 +1684,7 @@ void EXT_FUNC __API_HOOK(HandleMenu_ChooseAppearance)(CBasePlayer *pPlayer, int 
 			appearance.model_name = "gign";
 			break;
 		case 5:
-			if (AreRunningCZero())
+			if (AreRunningCZero() || g_bHasCZModels)
 			{
 				appearance.model_id = MODEL_SPETSNAZ;
 				appearance.model_name = "spetsnaz";
@@ -2074,14 +2075,14 @@ BOOL EXT_FUNC __API_HOOK(HandleMenu_ChooseTeam)(CBasePlayer *pPlayer, int slot)
 			switch (team)
 			{
 			case CT:
-				if (AreRunningCZero())
+				if (AreRunningCZero() || g_bHasCZModels)
 					ShowVGUIMenu(pPlayer, VGUI_Menu_Class_CT, (MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5 | MENU_KEY_6), "#CT_Select");
 				else
 					ShowVGUIMenu(pPlayer, VGUI_Menu_Class_CT, (MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5), "#CT_Select");
 				break;
 
 			case TERRORIST:
-				if (AreRunningCZero())
+				if (AreRunningCZero() || g_bHasCZModels)
 					ShowVGUIMenu(pPlayer, VGUI_Menu_Class_T, (MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5 | MENU_KEY_6), "#Terrorist_Select");
 				else
 					ShowVGUIMenu(pPlayer, VGUI_Menu_Class_T, (MENU_KEY_1 | MENU_KEY_2 | MENU_KEY_3 | MENU_KEY_4 | MENU_KEY_5), "#Terrorist_Select");
@@ -4010,6 +4011,15 @@ void ClientPrecache()
 		numPlayerModels = ARRAYSIZE(sPlayerModelFiles);
 	else
 		numPlayerModels = ARRAYSIZE(sPlayerModelFiles) - 2;
+
+#ifdef REGAMEDLL_ADD
+	if (g_pFileSystem->FileExists("models/player/spetsnaz/spetsnaz.mdl") && g_pFileSystem->FileExists("models/player/militia/militia.mdl"))
+	{
+		numPlayerModels = ARRAYSIZE(sPlayerModelFiles);
+		g_bHasCZModels = true;
+		CONSOLE_ECHO("CZ MODELS EXISTS!\n");
+	}
+#endif
 
 	for (i = 0; i < numPlayerModels; i++)
 		PRECACHE_MODEL(sPlayerModelFiles[i]);

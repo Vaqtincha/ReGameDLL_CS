@@ -2265,7 +2265,7 @@ bool CHalfLifeMultiplay::AddToVIPQueue(CBasePlayer *toAdd)
 void CHalfLifeMultiplay::ResetCurrentVIP()
 {
 	char *infobuffer = GET_INFO_BUFFER(m_pVIP->edict());
-	int numSkins = AreRunningCZero() ? CZ_NUM_SKIN : CS_NUM_SKIN;
+	int numSkins = (AreRunningCZero() || g_bHasCZModels) ? CZ_NUM_SKIN : CS_NUM_SKIN;
 
 	switch (RANDOM_LONG(0, numSkins))
 	{
